@@ -1,0 +1,23 @@
+body {
+  margin:0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: rgb(131, 58, 180);
+  background: linear-gradient(45deg, rgba(196,224,229,1) 0%, rgba((253,116,108,1) 100%));
+  position: relative;
+}
+
+main {
+  padding:10px;
+}
+
+nav a {
+  color:white
+}
+
+nav {
+  height: 5vh;
+  display:flex;
+  align-items: center;
+  justify-content: space-around;
+  background:salmon;
+}

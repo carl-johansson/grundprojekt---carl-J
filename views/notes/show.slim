@@ -1,0 +1,11 @@
+h2 Visa alla notes
+
+p = session["notes"]
+
+- if session["notes"]
+  - session["notes"].each do |note|
+    p = note
+- else
+    p  
+      | Det finns inga notes ännu. 
+      a href="/notes/new" Skapa ny
