@@ -25,16 +25,9 @@ get('/notes/new') do
 end
 
 
-#Skapa note
-post('/notes/create') do
-  if session["notes"] == nil
-    session["notes"] = []
-    session["notes"] << params["ny_note"]
-  else
-    session["notes"] << params["ny_note"]
-  end
-  redirect('/notes')
-end
+
+
+
 
 #settings
 get('/notes/settings') do
@@ -58,6 +51,8 @@ get('/wrong_log') do
   slim(:'/wrong_login')
 end
 
+
+
 #Dags för ändra username
 
 post("/notes/settings") do
@@ -72,6 +67,9 @@ post("/notes/settings") do
   end
   # sessions.update
 end
+
+
+
 #Mitt prpr:ande
 
 
@@ -93,8 +91,8 @@ post("/users/new") do #/user/new
     db.results_as_hash = true
     db.execute("INSERT INTO users (username, pwdigest) VALUES (?, ?)", username, password_digest) #första ? = username, andra ? = username_digest
     session[:username] = username
-    redirect('/start') #redirect till rotmappen, geten (get)
-
+    redirect('/notes/start') #redirect till rotmappen, geten (get)
+## /notes/start
   else
     #felhantering
     redirect('/wrong_reg')
@@ -116,15 +114,64 @@ post("/user/old") do  #login
   pwdigest = result["pwdigest"]
   id = result["id"]
   if BCrypt::Password.new(pwdigest) == password
-    redirect('/start') #ändrar från todos
-  else
+    redirect('/notes/start') #ändrar från todos
+  else ## /notes/start
     redirect('/wrong_log')
     "Wrong password"
   end
 
-  redirect('/start') #redirect till rotmappen, geten (get)
-  
+  redirect('/notes/start') #redirect till rotmappen, geten (get)
+  ## /notes/start
 end
 
 #lägger till text för att se om github funkar
 #lägger till ny hashtag för att se om github funkar
+
+#Under denna lektionen fredag 23 apr har jag fixat github.
+#Ändrat från svenska till engelska på tex submit knappar, ska göra allt på engelska (enklare så)
+#Fixade notes, rubrik finns samt vem som skrev den (den som är inne i session atm)
+
+#22 apr lyckades jag lägga till settings, nu behöver jag fixa så att ändra användarnamnet där innebär att man ändrar i databasen men behåller lösenordet.
+
+
+#Utveckla note-formuläret, spara tex även rubrik för note och författare
+
+
+#Skapa note
+post('/notes/create') do
+  if session["notes"] == nil
+    session["notes"] = []
+    session["notes"] << params["ny_rubrik"] + ", " + params["ny_note"] + "  " + "- Note skriven av: #{session[:username]}"
+  else
+    session["notes"] << params["ny_rubrik"] + ", " + params["ny_note"] + "  " + "- Note skriven av: #{session[:username]}"
+  end
+  redirect('/notes')
+end
+
+#Ta bort notes
+post('/notes/show') do
+  if session["notes"] == nil
+    session["notes"] = []
+  else
+    session["notes"].destroy = destroy
+  end
+  redirect('/notes')
+end
+
+
+#skapa note
+post('/notes/create') do
+  rubrik = params[:rubtik]
+  note_id = params[:note_id].to_i
+  p "vi fick in datan #{title} och #{note_id}"
+  db = SQLite3::Database.new("db/filnamn.db") #stoppa in datan
+  db.execute("INSERT INTO notes (Rubrik, NoteId) VALUES (?, ?)", rubrik, note_id)
+  redirect('/notes')
+end
+
+post('/notes/:id/delete') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new("db/filnamn.db") #stoppa in datan
+  db.execute("DELETE FROM notes WHERE NoteId = ?", id)
+  redirect('/notes')
+end

@@ -2,9 +2,13 @@ h2 Visa alla notes
 
 p = session["notes"]
 
+form action="/notes" method="POST"
+ input type="text" name="note" placeholder="Rubrik"
+ input type="submit" value="Ta bort note"
+
 - if session["notes"]
   - session["notes"].each do |note|
-    p = note
+    p = note 
 - else
     p  
       | Det finns inga notes ännu. 
